@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LinkDev.IKEA.DAL.Models.Department;
+using System.Reflection.Emit;
 
 namespace LinkDev.IKEA.DAL.Persistance.Data.Configurations.Departments
 {
@@ -19,7 +20,9 @@ namespace LinkDev.IKEA.DAL.Persistance.Data.Configurations.Departments
             builder.Property(D => D.Id).UseIdentityColumn(10, 10);
             builder.Property(D => D.Code).HasColumnType("varchar(20)").IsRequired();
             builder.Property(D => D.Name).HasColumnType("varchar(50)").IsRequired();
-            builder.Property(D => D.CreatedOn).HasDefaultValue("GETDATE()");
+            builder
+        .Property(d => d.CreatedOn)
+        .HasDefaultValueSql("GETDATE()");
             builder.Property(D => D.LastModifiedOn).HasComputedColumnSql("GETDATE()");
           
 
