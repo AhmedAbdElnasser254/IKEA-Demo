@@ -47,7 +47,6 @@ namespace LinkDev.IKEA.PL.Controllers
 
             var message = string.Empty;
 
-
             try
             {
                 var result = _departmentService.CreateDepartment(department);
@@ -90,5 +89,19 @@ namespace LinkDev.IKEA.PL.Controllers
 
         }
 
+
+        [HttpGet]
+        public ActionResult Details(int? id)
+        {
+            if (id is null)
+                return BadRequest();
+
+            var department = _departmentService.GetDepartmentById(id.Value);
+
+            if (department is null)
+                return NotFound();
+
+            return View(department);
+        }
     }
 }
