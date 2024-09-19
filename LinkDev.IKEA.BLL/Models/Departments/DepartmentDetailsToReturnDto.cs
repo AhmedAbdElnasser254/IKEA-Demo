@@ -4,10 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinkDev.IKEA.DAL.Entities.Department
+namespace LinkDev.IKEA.BLL.Models.Departments
 {
-    public class Department : ModelBase
+    public class DepartmentDetailsToReturnDto
     {
+        public int Id { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public int LastModifiedBy { get; set; }
+        public DateTime LastModifiedOn { get; set; }
         public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinkDev.IKEA.DAL.Entities.Department
+namespace LinkDev.IKEA.BLL.Models.Departments
 {
-    public class Department : ModelBase
+    public class CreatedDepartmentDto
     {
         public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;

@@ -1,4 +1,5 @@
 using LinkDev.IKEA.DAL.Persistance.Data;
+using LinkDev.IKEA.DAL.Persistance.Repositories.Departments;
 using Microsoft.EntityFrameworkCore;
 
 namespace LinkDev.IKEA.PL
@@ -23,6 +24,7 @@ namespace LinkDev.IKEA.PL
 
             });
 
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
             #endregion
 
