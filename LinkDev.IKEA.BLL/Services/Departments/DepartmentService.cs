@@ -32,7 +32,7 @@ namespace LinkDev.IKEA.BLL.Services.Departments
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
-                Description = department.Description,
+               
                 CreationDate = department.CreationDate,
             }).AsNoTracking().ToList();
 
