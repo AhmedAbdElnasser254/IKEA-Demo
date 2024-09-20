@@ -4,54 +4,57 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LinkDev.IKEA.PL.Controllers
 {
-    // Inheritance : DepartmentController is a Controller
-    // Composition : DepartmentController has a IDepartmentService
     public class DepartmentController : Controller
     {
-        #region First Way 
-        //[FromServices]
-        //public IDepartmentService DepartmentService { get; } = null!;
-        #endregion
-
         private readonly IDepartmentService _departmentService;
         private readonly ILogger<DepartmentController> _logger;
         private readonly IWebHostEnvironment _environment;
-        public DepartmentController(IDepartmentService departmentService,
-            ILogger<DepartmentController> logger,
-            IWebHostEnvironment environment)
+
+        public DepartmentController(IDepartmentService departmentService
+            ,ILogger<DepartmentController>logger
+            ,IWebHostEnvironment environment)
         {
-            _departmentService = departmentService;
             _logger = logger;
             _environment = environment;
+            _departmentService = departmentService;
+          
         }
 
-        [HttpGet] // GRT : /Department/Index
+        [HttpGet]
         public IActionResult Index()
         {
+
             var departments = _departmentService.GetAllDepartments();
+
             return View(departments);
         }
 
-        [HttpGet] // GET : /Department/Create
+
+
+
+        [HttpGet] //Get
         public IActionResult Create()
         {
             return View();
+
         }
 
-        [HttpPost] // POST
+        [HttpPost] //Post
         public IActionResult Create(CreatedDepartmentDto department)
         {
-            if (!ModelState.IsValid) // Server-Side Validation
+            if (ModelState.IsValid)
                 return View(department);
 
             var message = string.Empty;
+
             try
             {
                 var result = _departmentService.CreateDepartment(department);
+
                 if (result > 0)
                     return RedirectToAction(nameof(Index));
                 else
-                {
+                { 
                     message = "Department Is Not Created";
                     ModelState.AddModelError(string.Empty, message);
                     return View(department);
@@ -59,10 +62,13 @@ namespace LinkDev.IKEA.PL.Controllers
             }
             catch (Exception ex)
             {
-                // 1. Log Exception
+               // 1. Log Exception
+
                 _logger.LogError(ex, ex.Message);
 
+
                 // 2. Set Message
+
                 if (_environment.IsDevelopment())
                 {
                     message = ex.Message;
@@ -71,13 +77,21 @@ namespace LinkDev.IKEA.PL.Controllers
                 else
                 {
                     message = "Department Is Not Created";
+
                     return View("Error", message);
                 }
+                   
+
+               
+
             }
+
+
         }
 
-        [HttpGet] // GET : /Department/Details
-        public IActionResult Details(int? id)
+
+        [HttpGet]
+        public ActionResult Details(int? id)
         {
             if (id is null)
                 return BadRequest();
