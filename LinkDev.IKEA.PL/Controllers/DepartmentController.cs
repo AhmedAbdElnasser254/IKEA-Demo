@@ -15,6 +15,7 @@ namespace LinkDev.IKEA.PL.Controllers
         //public IDepartmentService DepartmentService { get; } = null!;
         #endregion
 
+        #region Services
         private readonly IDepartmentService _departmentService;
         private readonly ILogger<DepartmentController> _logger;
         private readonly IWebHostEnvironment _environment;
@@ -26,7 +27,9 @@ namespace LinkDev.IKEA.PL.Controllers
             _logger = logger;
             _environment = environment;
         }
+        #endregion
 
+        #region Index
         [HttpGet] // GRT : /Department/Index
         public IActionResult Index()
         {
@@ -34,6 +37,9 @@ namespace LinkDev.IKEA.PL.Controllers
             return View(departments);
         }
 
+        #endregion
+
+        #region Details
         [HttpGet] // GET : /Department/Details
         public IActionResult Details(int? id)
         {
@@ -48,6 +54,9 @@ namespace LinkDev.IKEA.PL.Controllers
             return View(department);
         }
 
+        #endregion
+
+        #region Create
         [HttpGet] // GET : /Department/Create
         public IActionResult Create()
         {
@@ -88,10 +97,10 @@ namespace LinkDev.IKEA.PL.Controllers
 
         }
 
-      
 
+        #endregion   [HttpGet] // Get: Department/Edit/id
 
-        [HttpGet] // Get: Department/Edit/id
+        #region Edit
         public IActionResult Edit(int? id)
         {
             if (id is null)
@@ -104,7 +113,7 @@ namespace LinkDev.IKEA.PL.Controllers
 
             return View(new DepartmentEditViewModel()
             {
-            
+
                 Code = department.Code,
                 Name = department.Name,
                 Description = department.Description,
@@ -112,9 +121,8 @@ namespace LinkDev.IKEA.PL.Controllers
             });
         }
 
-
         [HttpPost] //Post
-        public IActionResult Edit([FromRoute]int id ,DepartmentEditViewModel departmentVM)
+        public IActionResult Edit([FromRoute] int id, DepartmentEditViewModel departmentVM)
         {
             if (!ModelState.IsValid) // Server-Side Validation
                 return View(departmentVM);
@@ -155,7 +163,7 @@ namespace LinkDev.IKEA.PL.Controllers
 
                 message = _environment.IsDevelopment() ? ex.Message : "An Error During Updating The Department :(";
 
-               
+
             }
 
             ModelState.AddModelError(string.Empty, message);
@@ -164,6 +172,53 @@ namespace LinkDev.IKEA.PL.Controllers
 
         }
 
+        #endregion
 
+        #region Delete
+        [HttpGet] // Get /Department/Delete/id?
+        public IActionResult Delete(int? id)
+        {
+            if (id is null)
+                return BadRequest();
+
+            var department = _departmentService.GetDepartmentById(id.Value);
+
+            if (department is null)
+                return NotFound();
+
+            return View(department);
+
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var message = string.Empty;
+
+            try
+            {
+                var deleted = _departmentService.DeleteDepartment(id);
+                if (deleted)
+                    return RedirectToAction(nameof(Index));
+
+
+                message = "An Error During Deleting The Department :(";
+            }
+            catch (Exception ex)
+            {
+                // 1. Log Exception
+                _logger.LogError(ex, ex.Message);
+
+                // 2. Set Message
+
+                message = _environment.IsDevelopment() ? ex.Message : "An Error During Deleting The Department :(";
+            }
+            //ModelState.AddModelError(string.Empty, message);
+            return RedirectToAction(nameof(Index));
+
+
+        }
+
+        #endregion
     }
 }
