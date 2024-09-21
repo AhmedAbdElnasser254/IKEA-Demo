@@ -1,5 +1,6 @@
 ﻿using LinkDev.IKEA.BLL.Models.Employees;
 using LinkDev.IKEA.BLL.Services.Employees;
+using LinkDev.IKEA.PL.ViewModels.Employees;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LinkDev.IKEA.PL.Controllers
@@ -98,77 +99,72 @@ namespace LinkDev.IKEA.PL.Controllers
 
         #endregion   [HttpGet] // Get: Employee/Edit/id
 
-        #region Edit
-        //public IActionResult Edit(int? id)
-        //{
-        //    if (id is null)
-        //        return BadRequest(); // 400
+        #region Update
+        public IActionResult Edit(int? id)
+        {
+            if (id is null)
+                return BadRequest(); // 400
 
-        //    var employee = _employeeService.GetEmployeeById(id.Value);
+            var employee = _employeeService.GetEmployeeById(id.Value);
 
-        //    if (employee is null)
-        //        return NotFound(); //404
+            if (employee is null)
+                return NotFound(); //404
 
-        //    return View(new EmployeeEditViewModel()
-        //    {
+            return View(new UpdatedEmployeeDto()
+            {
+                Name = employee.Name,
+                Address = employee.Address,
+                Email = employee.Email,
+                Age = employee.Age,
+                Salary = employee.Salary,
+                PhoneNumber = employee.PhoneNumber,
+                IsActive = employee.IsActive,
+                EmployeeType = employee.EmployeeType,
+                Gender= employee.Gender,
+                HiringDate = employee.HiringDate,
+            });
+        }
 
-        //        Code = employee.Code,
-        //        Name = employee.Name,
-        //        Description = employee.Description,
-        //        CreationDate = employee.CreationDate,
-        //    });
-        //}
+        [HttpPost] //Post
+        public IActionResult Edit([FromRoute] int id, UpdatedEmployeeDto employee)
+        {
+            if (!ModelState.IsValid) // Server-Side Validation
+                return View(employee);
 
-        //[HttpPost] //Post
-        //public IActionResult Edit([FromRoute] int id, EmployeeEditViewModel employeeVM)
-        //{
-        //    if (!ModelState.IsValid) // Server-Side Validation
-        //        return View(employeeVM);
+            var message = string.Empty;
 
-        //    var message = string.Empty;
+            try
+            {
+              
 
+                var Updated = _employeeService.UpdateEmployee(employee) > 0;
 
-        //    try
-        //    {
-
-        //        var employeeToUpdate = new UpdatedEmployeeDto()
-        //        {
-        //            Id = id,
-        //            Code = employeeVM.Code,
-        //            Name = employeeVM.Name,
-        //            Description = employeeVM.Description,
-        //            CreationDate = employeeVM.CreationDate,
-
-        //        };
-
-        //        var Updated = _employeeService.UpdateEmployee(employeeToUpdate) > 0;
-
-        //        if (Updated)
-        //            return RedirectToAction(nameof(Index));
+                if (Updated)
+                    return RedirectToAction(nameof(Index));
 
 
-        //        message = "An Error During Updating The Employee :(";
+                message = "An Error During Updating The Employee :(";
 
 
-        //    }
-        //    catch (Exception ex)
-        //    {
+            }
+            catch (Exception ex)
+            {
 
-        //        // 1. Log Exception
-        //        _logger.LogError(ex, ex.Message);
+                // 1. Log Exception
+                _logger.LogError(ex, ex.Message);
 
-        //        // 2. Set Message
+                // 2. Set Message
 
-        //        message = _environment.IsDevelopment() ? ex.Message : "An Error During Updating The Employee :(";
-
-
-        //    }
-
-        //    ModelState.AddModelError(string.Empty, message);
-        //    return View(employeeVM);
+                message = _environment.IsDevelopment() ? ex.Message : "An Error During Updating The Employee :(";
 
 
-        //}
+            }
+
+            ModelState.AddModelError(string.Empty, message);
+            return View(employee);
+
+
+        }
 
         #endregion
 
