@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinkDev.IKEA.BLL.Models.Departments
+namespace LinkDev.IKEA.BLL.Models.Employees
 {
     public class CreatedEmployeeDto
     {

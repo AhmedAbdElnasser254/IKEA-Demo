@@ -1,4 +1,4 @@
-﻿using LinkDev.IKEA.BLL.Models.Departments;
+﻿using LinkDev.IKEA.BLL.Models.Employees;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LinkDev.IKEA.BLL.Services.Employees
 {
-    internal interface IEmployeeService
+    public interface IEmployeeService
     {
         IEnumerable<EmployeeDto> GetAllEmployees();
 

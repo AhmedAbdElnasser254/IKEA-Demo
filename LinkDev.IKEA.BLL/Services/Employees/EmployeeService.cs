@@ -1,6 +1,5 @@
-﻿using LinkDev.IKEA.BLL.Models.Departments;
+﻿using LinkDev.IKEA.BLL.Models.Employees;
 using LinkDev.IKEA.DAL.Models.Employees;
-using LinkDev.IKEA.DAL.Persistance.Repositories.Departments;
 using LinkDev.IKEA.DAL.Persistance.Repositories.Employees;
 using System;
 using System.Collections.Generic;
@@ -33,8 +32,8 @@ namespace LinkDev.IKEA.BLL.Services.Employees
                 IsActive = employee.IsActive,
                 Email = employee.Email,
                 Salary = employee.Salary,
-                Gender = nameof(employee.Gender),
-                EmployeeType = nameof(employee.EmployeeType),
+                Gender = employee.Gender.ToString(),
+                EmployeeType = employee.EmployeeType.ToString(),
 
 
             });

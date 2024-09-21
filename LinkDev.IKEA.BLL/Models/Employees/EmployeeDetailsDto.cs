@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LinkDev.IKEA.BLL.Models.Departments
+namespace LinkDev.IKEA.BLL.Models.Employees
 {
     public class EmployeeDetailsDto
     {
@@ -33,5 +33,12 @@ namespace LinkDev.IKEA.BLL.Models.Departments
 
         public string Gender { get; set; } = null!;
         public string EmployeeType { get; set; } = null!;
+
+        #region Adminstration
+        public int CreatedBy { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public int LastModifiedBy { get; set; }
+        public DateTime LastModifiedOn { get; set; }
+        #endregion
     }
 }
