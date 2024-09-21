@@ -48,11 +48,12 @@
             <label class="form-check-label" asp-for="Gender"></label><br />
             @foreach (Gender genderOption in Enum.GetValues(typeof(Gender)))
             {
-
-             <label class="radio-inline">
-                 <input type="radio" asp-for="Gender" value="@genderOption" />
-                 @genderOption
-             </label>   
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" asp-for="Gender" value="@genderOption" />
+                    <label class="form-check-label" asp-for="Gender">
+                        @genderOption
+                    </label>
+                </div>
 
             }
         </div>
@@ -76,7 +77,7 @@
 
         <div class="mt-4">
             <input type="submit" value="Create" class="btn btn-primary" />
-            <a asp-action="Index" class="btn btn-light"> Back To List </a>
+            <a asp-controller="Employee" asp-action="Index" class="btn btn-light"> Back To List </a>
         </div>
 
 

@@ -45,6 +45,7 @@ namespace LinkDev.IKEA.BLL.Models.Employees
 
         public Gender Gender { get; set; }
 
+        [Display(Name ="Employee Type")]
         public EmployeeType EmployeeType { get; set; }
 
 
