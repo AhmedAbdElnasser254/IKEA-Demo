@@ -29,6 +29,12 @@ namespace LinkDev.IKEA.DAL.Persistance.Repositories._Generic
         {
             return _dbContext.Set<T>();
         }
+
+        public IEnumerable<T> GetIEnumerable()
+        {
+            return _dbContext.Set<T>();
+        }
+
         public T? Get(int id)
         {
             return _dbContext.Set<T>().Find(id);
@@ -57,7 +63,7 @@ namespace LinkDev.IKEA.DAL.Persistance.Repositories._Generic
         public int Delete(T entity)
         {
             entity.IsDeleted = true;
-            _dbContext.Set<T>().Remove(entity);
+            _dbContext.Set<T>().Update(entity);
             return _dbContext.SaveChanges();
         }
 

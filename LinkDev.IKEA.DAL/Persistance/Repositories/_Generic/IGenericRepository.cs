@@ -15,6 +15,7 @@ namespace LinkDev.IKEA.DAL.Persistance.Repositories._Generic
 
         IQueryable<T> GetAllAsIQueryable();
 
+        IEnumerable<T> GetIEnumerable();
 
         int Add(T entity);
         int Update(T entity);

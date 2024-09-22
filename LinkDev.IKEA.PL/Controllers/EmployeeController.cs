@@ -169,20 +169,7 @@ namespace LinkDev.IKEA.PL.Controllers
         #endregion
 
         #region Delete
-        [HttpGet] // Get /Employee/Delete/id?
-        public IActionResult Delete(int? id)
-        {
-            if (id is null)
-                return BadRequest();
-
-            var employee = _employeeService.GetEmployeeById(id.Value);
-
-            if (employee is null)
-                return NotFound();
-
-            return View(employee);
-
-        }
+       
 
         [HttpPost]
         public IActionResult Delete(int id)
