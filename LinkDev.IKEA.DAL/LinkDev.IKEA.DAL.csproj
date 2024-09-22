@@ -7,8 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Persistance\Data\Data Seeds\**" />
+    <EmbeddedResource Remove="Persistance\Data\Data Seeds\**" />
+    <None Remove="Persistance\Data\Data Seeds\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Persistance\Data\Migrations\" />
-    <Folder Include="Persistance\Data\Data Seeds\" />
+    <Folder Include="Persistance\Data\DataSeeds\" />
+    <Folder Include="Persistance\Repositories\NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>

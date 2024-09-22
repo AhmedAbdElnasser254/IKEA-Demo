@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LinkDev.IKEA.BLL.Models.Departments
 {
-    public class DepartmentDetailsToReturnDto
+    public class DepartmentDetailsDto
     {
         public int Id { get; set; }
         public int CreatedBy { get; set; }
@@ -17,8 +17,9 @@ namespace LinkDev.IKEA.BLL.Models.Departments
         public DateTime LastModifiedOn { get; set; }
         public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;
-        public string? Description { get; set; } 
-        
+        public string? Description { get; set; }
+
+        [Display(Name = "Date Of Creation")]
         public DateOnly CreationDate { get; set; }
     }
 }
