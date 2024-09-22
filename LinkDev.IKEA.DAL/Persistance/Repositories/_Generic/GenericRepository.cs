@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LinkDev.IKEA.DAL.Persistance.Repositories._Generic
 {
-    public class GenericRepository<T> where T : ModelBase
+    public class GenericRepository<T> : IGenericRepository<T> where T : ModelBase 
     {
         private protected readonly ApplicationDbContext _dbContext;
 
@@ -17,6 +17,9 @@ namespace LinkDev.IKEA.DAL.Persistance.Repositories._Generic
         {
             _dbContext = dbContext;
         }
+
+
+
         public IEnumerable<T> GetAll(bool withAsNoTracking = true)
         {
             if (withAsNoTracking)
@@ -63,7 +66,7 @@ namespace LinkDev.IKEA.DAL.Persistance.Repositories._Generic
         public int Delete(T entity)
         {
             entity.IsDeleted = true;
-            _dbContext.Set<T>().Update(entity);
+            _dbContext.Set<T>().Remove(entity);
             return _dbContext.SaveChanges();
         }
 

@@ -33,7 +33,23 @@ namespace LinkDev.IKEA.PL.Controllers
         [HttpGet] // GRT : /Department/Index
         public IActionResult Index()
         {
+
+            // Views Dictionary : Pass Data From Controller(Action) To View (From View ---> [Partial View , Layout])
+
+
+
+            // 1 . ViewData is a Dictionary Type Property
+            ViewData["Message"] = "Hello Ahmed";
+
+
+            // 2. ViewBag is a Dynamic Type Property
+            ViewBag.Message = "Hello Ahmed";
+            ViewBag.Message = new { Id = 10, Name = "Ahmed" };
+
+
+
             var departments = _departmentService.GetAllDepartments();
+
             return View(departments);
         }
 
@@ -64,23 +80,36 @@ namespace LinkDev.IKEA.PL.Controllers
         }
 
         [HttpPost] // POST
-        public IActionResult Create(CreatedDepartmentDto department)
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(DepartmentEditViewModel departmentVM)
         {
             if (!ModelState.IsValid) // Server-Side Validation
-                return View(department);
+                return View(departmentVM);
 
             var message = string.Empty;
             try
             {
-                var result = _departmentService.CreateDepartment(department);
-                if (result > 0)
-                    return RedirectToAction(nameof(Index));
-                else
+                var CreatedDepartment = new CreatedDepartmentDto()
                 {
-                    message = "Department Is Not Created";
-                    ModelState.AddModelError(string.Empty, message);
-                    return View(department);
-                }
+
+                    Code = departmentVM.Code,
+                    Name = departmentVM.Name,
+                    Description = departmentVM.Description,
+                    CreationDate = departmentVM.CreationDate,
+
+                };
+                var Created = _departmentService.CreateDepartment(CreatedDepartment) > 0;
+
+                // TempData : Is a Property of type Dictionary object
+
+                if (!Created)
+                    message = "Department Is Created";
+
+                ModelState.AddModelError(string.Empty, message);
+                return View(departmentVM);
+
+
+              
             }
             catch (Exception ex)
             {
@@ -90,17 +119,18 @@ namespace LinkDev.IKEA.PL.Controllers
                 // 2. Set Message
                 message = _environment.IsDevelopment() ? ex.Message : "An Error During Creating The Department :(";
 
-            }
+                TempData["Message"] = message;
+                return RedirectToAction(nameof(Index));
 
-            ModelState.AddModelError(string.Empty, message);
-            return View(department);
+
+            }
 
         }
 
 
         #endregion   [HttpGet] // Get: Department/Edit/id
 
-        #region Edit
+        #region Update
         public IActionResult Edit(int? id)
         {
             if (id is null)
@@ -122,6 +152,7 @@ namespace LinkDev.IKEA.PL.Controllers
         }
 
         [HttpPost] //Post
+        [ValidateAntiForgeryToken]
         public IActionResult Edit([FromRoute] int id, DepartmentEditViewModel departmentVM)
         {
             if (!ModelState.IsValid) // Server-Side Validation
@@ -191,6 +222,7 @@ namespace LinkDev.IKEA.PL.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
             var message = string.Empty;

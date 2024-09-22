@@ -27,14 +27,17 @@ namespace LinkDev.IKEA.BLL.Services.Departments
 
         public IEnumerable<DepartmentDto> GetAllDepartments()
         {
-            var departments = _departmentRepository.GetAllAsIQueryable().Select(department => new DepartmentDto()
+            var departments = _departmentRepository
+                .GetIEnumerable()
+                .Where(D => !D.IsDeleted)
+                .Select(department => new DepartmentDto()
             {
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
                
                 CreationDate = department.CreationDate,
-            }).AsNoTracking().ToList();
+            }).ToList();
 
             return departments;
         }
