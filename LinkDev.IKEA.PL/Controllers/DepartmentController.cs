@@ -65,22 +65,31 @@ namespace LinkDev.IKEA.PL.Controllers
 
         [HttpPost] // POST
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreatedDepartmentDto department)
+        public IActionResult Create(DepartmentEditViewModel departmentVM)
         {
             if (!ModelState.IsValid) // Server-Side Validation
-                return View(department);
+                return View(departmentVM);
 
             var message = string.Empty;
             try
             {
-                var result = _departmentService.CreateDepartment(department);
+                var CreatedDepartment = new CreatedDepartmentDto()
+                {
+                   
+                    Code = departmentVM.Code,
+                    Name = departmentVM.Name,
+                    Description = departmentVM.Description,
+                    CreationDate = departmentVM.CreationDate,
+
+                };
+                var result = _departmentService.CreateDepartment(CreatedDepartment);
                 if (result > 0)
                     return RedirectToAction(nameof(Index));
                 else
                 {
                     message = "Department Is Not Created";
                     ModelState.AddModelError(string.Empty, message);
-                    return View(department);
+                    return View(CreatedDepartment);
                 }
             }
             catch (Exception ex)
@@ -94,7 +103,7 @@ namespace LinkDev.IKEA.PL.Controllers
             }
 
             ModelState.AddModelError(string.Empty, message);
-            return View(department);
+            return View(departmentVM);
 
         }
 
