@@ -22,7 +22,13 @@ namespace LinkDev.IKEA.DAL.Persistance.Data.Configurations.Departments
             builder.Property(D => D.Name).HasColumnType("varchar(50)").IsRequired();
             builder.Property(d => d.CreatedOn).HasDefaultValueSql("GETUTCDATE()");
             builder.Property(D => D.LastModifiedOn).HasComputedColumnSql("GETDATE()");
-          
+
+
+
+            builder.HasMany(D => D.Employees)
+                  .WithOne(E => E.Department)
+                  .HasForeignKey(E => E.DepartmentId)
+                  .OnDelete(DeleteBehavior.SetNull);
 
 
         }

@@ -1,4 +1,5 @@
 ﻿using LinkDev.IKEA.BLL.Models.Employees;
+using LinkDev.IKEA.BLL.Services.Departments;
 using LinkDev.IKEA.BLL.Services.Employees;
 using LinkDev.IKEA.PL.ViewModels.Employees;
 using Microsoft.AspNetCore.Mvc;
@@ -18,8 +19,9 @@ namespace LinkDev.IKEA.PL.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly ILogger<EmployeeController> _logger;
         private readonly IWebHostEnvironment _environment;
-        public EmployeeController(IEmployeeService employeeService,
-            ILogger<EmployeeController> logger,
+        public EmployeeController(
+            IEmployeeService employeeService,
+             ILogger<EmployeeController> logger,
             IWebHostEnvironment environment)
         {
             _employeeService = employeeService;
@@ -59,6 +61,8 @@ namespace LinkDev.IKEA.PL.Controllers
         [HttpGet] // GET : /Employee/Create
         public IActionResult Create()
         {
+ 
+
             return View();
         }
 
@@ -111,6 +115,7 @@ namespace LinkDev.IKEA.PL.Controllers
 
             if (employee is null)
                 return NotFound(); //404
+
 
             return View(new UpdatedEmployeeDto()
             {
