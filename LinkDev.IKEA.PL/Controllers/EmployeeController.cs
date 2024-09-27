@@ -36,8 +36,8 @@ namespace LinkDev.IKEA.PL.Controllers
         {
             var employees = _employeeService.GetAllEmployees(Search);
 
-            if(!string.IsNullOrEmpty(Search))
-                return PartialView("Partials/_EmployeeListPartial", employees );
+            if (!string.IsNullOrEmpty(Search))
+                return PartialView("Partials/_EmployeeListPartial", employees);
 
             return View(employees);
         }

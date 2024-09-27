@@ -17,8 +17,8 @@ namespace LinkDev.IKEA.DAL.Persistance.Repositories._Generic
 
         IEnumerable<T> GetIEnumerable();
 
-        int Add(T entity);
-        int Update(T entity);
-        int Delete(T entity);
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
     }
 }

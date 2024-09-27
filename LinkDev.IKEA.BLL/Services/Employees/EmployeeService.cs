@@ -1,6 +1,7 @@
 ﻿using LinkDev.IKEA.BLL.Models.Employees;
 using LinkDev.IKEA.DAL.Models.Employees;
 using LinkDev.IKEA.DAL.Persistance.Repositories.Employees;
+using LinkDev.IKEA.DAL.Persistance.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,50 +13,72 @@ namespace LinkDev.IKEA.BLL.Services.Employees
 {
     public class EmployeeService : IEmployeeService
     {
+        private readonly IUnitOfWork _unitOfWork;
 
-        private readonly IEmployeeRepository _employeeRepository;
-
-        public EmployeeService(IEmployeeRepository employeeRepository)
+        public EmployeeService(IUnitOfWork unitOfWork)
         {
-            _employeeRepository = employeeRepository;
+            _unitOfWork = unitOfWork;
         }
 
 
         public IEnumerable<EmployeeDto> GetAllEmployees(string Search)
         {
-            var employees = _employeeRepository
-          
+            var employees = _unitOfWork.EmployeeRepository
                 .GetAllAsIQueryable()
                 .Where(E => !E.IsDeleted && (string.IsNullOrEmpty(Search) || E.Name.ToLower().Contains(Search.ToLower())))
                 .Include(E => E.Department)
                 .Select(employee => new EmployeeDto()
-            {
+                {
 
-                Id = employee.Id,
-                Name = employee.Name,
-                Age = employee.Age,
-                Address = employee.Address,
-                IsActive = employee.IsActive,
-                Email = employee.Email,
-                Salary = employee.Salary,
-                Gender = nameof(employee.Gender),
-                EmployeeType = nameof(employee.EmployeeType),
-                Department = employee.Department.Name
+                    Id = employee.Id,
+                    Name = employee.Name,
+                    Age = employee.Age,
+                    Address = employee.Address,
+                    IsActive = employee.IsActive,
+                    Email = employee.Email,
+                    Salary = employee.Salary,
+                    Gender = nameof(employee.Gender),
+                    EmployeeType = nameof(employee.EmployeeType),
+                    Department = employee.Department.Name
 
 
-            }).ToList();
+                }).ToList();
 
-          
-           
-            return employees;  
+
+
+            return employees;
 
         }
 
+        //public EmployeeDetailsDto? GetEmployeeById(int id)
+        //{
+        //    var employee = _unitOfWork.EmployeeRepository.Get(id);
+
+        //    if (employee is { })
+        //        return new EmployeeDetailsDto()
+        //        {
+        //            Id = employee.Id,
+        //            Name = employee.Name,
+        //            Age = employee.Age,
+        //            Address = employee.Address,
+        //            IsActive = employee.IsActive,
+        //            Email = employee.Email,
+        //            Salary = employee.Salary,
+        //            Gender = employee.Gender,
+        //            EmployeeType = employee.EmployeeType,
+        //            Department = employee.Department.Name,
+        //        };
+
+        //    return null;
+        //}
+
+
         public EmployeeDetailsDto? GetEmployeeById(int id)
         {
-            var employee = _employeeRepository.Get(id);
+            var employee = _unitOfWork.EmployeeRepository.Get(id);
 
-            if (employee is { })
+            if (employee != null)
+            {
                 return new EmployeeDetailsDto()
                 {
                     Id = employee.Id,
@@ -67,11 +90,14 @@ namespace LinkDev.IKEA.BLL.Services.Employees
                     Salary = employee.Salary,
                     Gender = employee.Gender,
                     EmployeeType = employee.EmployeeType,
-                    Department = employee.Department.Name,
+                    Department = employee.Department.Name, // Safeguard if Department is null
                 };
+            }
 
-            return null;
+            return null; // Employee not found
         }
+
+
         public int CreateEmployee(CreatedEmployeeDto employeeDto)
         {
             var employee = new Employee()
@@ -85,13 +111,18 @@ namespace LinkDev.IKEA.BLL.Services.Employees
                 Salary = employeeDto.Salary,
                 HiringDate = employeeDto.HiringDate,
                 Gender = employeeDto.Gender,
-                EmployeeType = employeeDto.EmployeeType, 
+                EmployeeType = employeeDto.EmployeeType,
                 DepartmentId = employeeDto.DepartmentId,
                 CreatedBy = 1,
                 LastModifiedBy = 1,
                 LastModifiedOn = DateTime.UtcNow,
             };
-            return _employeeRepository.Add(employee);
+
+
+            _unitOfWork.EmployeeRepository.Add(employee);
+
+            return _unitOfWork.Complete();
+
         }
 
         public int UpdateEmployee(UpdatedEmployeeDto employeeDto)
@@ -114,18 +145,25 @@ namespace LinkDev.IKEA.BLL.Services.Employees
                 LastModifiedBy = 1,
                 LastModifiedOn = DateTime.UtcNow,
             };
-            return _employeeRepository.Update(employee);
+            _unitOfWork.EmployeeRepository.Update(employee);
+            return _unitOfWork.Complete();
         }
 
         public bool DeleteEmployee(int id)
         {
-            var employee = _employeeRepository.Get(id);
+
+
+            var employeeRepo = _unitOfWork.EmployeeRepository;
+
+
+            var employee = employeeRepo.Get(id);
             if (employee is { })
-                return _employeeRepository.Delete(employee) > 0 ;
-            return false;
+                 employeeRepo.Delete(employee);
+
+            return _unitOfWork.Complete() > 0;
         }
 
-     
 
-       }
+
+    }
 }
