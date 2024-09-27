@@ -21,12 +21,12 @@ namespace LinkDev.IKEA.BLL.Services.Employees
         }
 
 
-        public IEnumerable<EmployeeDto> GetAllEmployees()
+        public IEnumerable<EmployeeDto> GetAllEmployees(string Search)
         {
             var employees = _employeeRepository
           
                 .GetAllAsIQueryable()
-                .Where(E => !E.IsDeleted)
+                .Where(E => !E.IsDeleted && (string.IsNullOrEmpty(Search) || E.Name.ToLower().Contains(Search.ToLower())))
                 .Include(E => E.Department)
                 .Select(employee => new EmployeeDto()
             {

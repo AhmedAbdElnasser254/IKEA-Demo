@@ -1,4 +1,5 @@
-﻿using LinkDev.IKEA.BLL.Models.Departments;
+﻿using AutoMapper;
+using LinkDev.IKEA.BLL.Models.Departments;
 using LinkDev.IKEA.BLL.Services.Departments;
 using LinkDev.IKEA.DAL.Entities.Department;
 using LinkDev.IKEA.PL.ViewModels.Departments;
@@ -17,13 +18,16 @@ namespace LinkDev.IKEA.PL.Controllers
 
         #region Services
         private readonly IDepartmentService _departmentService;
+        private readonly IMapper _mapper;
         private readonly ILogger<DepartmentController> _logger;
         private readonly IWebHostEnvironment _environment;
         public DepartmentController(IDepartmentService departmentService,
+            IMapper mapper,
             ILogger<DepartmentController> logger,
             IWebHostEnvironment environment)
         {
             _departmentService = departmentService;
+            _mapper = mapper;
             _logger = logger;
             _environment = environment;
         }
@@ -89,15 +93,20 @@ namespace LinkDev.IKEA.PL.Controllers
             var message = string.Empty;
             try
             {
-                var CreatedDepartment = new CreatedDepartmentDto()
-                {
+                ///var CreatedDepartment = new CreatedDepartmentDto()
+                ///{
+                ///
+                ///    Code = departmentVM.Code,
+                ///    Name = departmentVM.Name,
+                ///    Description = departmentVM.Description,
+                ///    CreationDate = departmentVM.CreationDate,
+                ///
+                ///};
+                ///
 
-                    Code = departmentVM.Code,
-                    Name = departmentVM.Name,
-                    Description = departmentVM.Description,
-                    CreationDate = departmentVM.CreationDate,
+                var CreatedDepartment = _mapper.Map<CreatedDepartmentDto>(departmentVM);
 
-                };
+
                 var Created = _departmentService.CreateDepartment(CreatedDepartment) > 0;
 
                 // TempData : Is a Property of type Dictionary object
@@ -141,14 +150,11 @@ namespace LinkDev.IKEA.PL.Controllers
             if (department is null)
                 return NotFound(); //404
 
-            return View(new DepartmentEditViewModel()
-            {
 
-                Code = department.Code,
-                Name = department.Name,
-                Description = department.Description,
-                CreationDate = department.CreationDate,
-            });
+            var departmentVM = _mapper.Map<DepartmentDetailsDto, DepartmentEditViewModel>(department);
+
+
+            return View(departmentVM);
         }
 
         [HttpPost] //Post
@@ -164,15 +170,16 @@ namespace LinkDev.IKEA.PL.Controllers
             try
             {
 
-                var departmentToUpdate = new UpdatedDepartmentDto()
-                {
-                    Id = id,
-                    Code = departmentVM.Code,
-                    Name = departmentVM.Name,
-                    Description = departmentVM.Description,
-                    CreationDate = departmentVM.CreationDate,
+                ///var departmentToUpdate = new UpdatedDepartmentDto()
+                ///{
+                ///    Id = id,
+                ///    Code = departmentVM.Code,
+                ///    Name = departmentVM.Name,
+                ///    Description = departmentVM.Description,
+                ///    CreationDate = departmentVM.CreationDate,};
 
-                };
+                var departmentToUpdate = _mapper.Map<UpdatedDepartmentDto>(departmentVM);
+
 
                 var Updated = _departmentService.UpdateDepartment(departmentToUpdate) > 0;
 
