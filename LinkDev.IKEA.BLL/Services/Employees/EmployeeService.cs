@@ -54,7 +54,7 @@ namespace LinkDev.IKEA.BLL.Services.Employees
         //{
         //    var employee = _unitOfWork.EmployeeRepository.Get(id);
 
-        //    if (employee is { })
+        //    if (employee != null)
         //        return new EmployeeDetailsDto()
         //        {
         //            Id = employee.Id,
@@ -90,7 +90,7 @@ namespace LinkDev.IKEA.BLL.Services.Employees
                     Salary = employee.Salary,
                     Gender = employee.Gender,
                     EmployeeType = employee.EmployeeType,
-                    Department = employee.Department.Name, // Safeguard if Department is null
+                    Department = employee.Department?.Name ?? "Unknown", // Safeguard if Department is null
                 };
             }
 
@@ -158,7 +158,7 @@ namespace LinkDev.IKEA.BLL.Services.Employees
 
             var employee = employeeRepo.Get(id);
             if (employee is { })
-                 employeeRepo.Delete(employee);
+                employeeRepo.Delete(employee);
 
             return _unitOfWork.Complete() > 0;
         }
