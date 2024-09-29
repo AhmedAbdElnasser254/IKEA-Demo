@@ -1,6 +1,6 @@
-﻿using LinkDev.IKEA.BLL.Models.Departments;
+﻿using AutoMapper;
+using LinkDev.IKEA.BLL.Models.Departments;
 using LinkDev.IKEA.BLL.Services.Departments;
-using LinkDev.IKEA.DAL.Entities.Department;
 using LinkDev.IKEA.PL.ViewModels.Departments;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,13 +17,16 @@ namespace LinkDev.IKEA.PL.Controllers
 
         #region Services
         private readonly IDepartmentService _departmentService;
+        private readonly IMapper _mapper;
         private readonly ILogger<DepartmentController> _logger;
         private readonly IWebHostEnvironment _environment;
         public DepartmentController(IDepartmentService departmentService,
+            IMapper mapper,
             ILogger<DepartmentController> logger,
             IWebHostEnvironment environment)
         {
             _departmentService = departmentService;
+            _mapper = mapper;
             _logger = logger;
             _environment = environment;
         }
@@ -31,38 +34,40 @@ namespace LinkDev.IKEA.PL.Controllers
 
         #region Index
         [HttpGet] // GRT : /Department/Index
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
 
-            // Views Dictionary : Pass Data From Controller(Action) To View (From View ---> [Partial View , Layout])
+            #region ViewData Vs ViewBag
+            //// Views Dictionary : Pass Data From Controller(Action) To View (From View ---> [Partial View , Layout])
 
 
 
-            // 1 . ViewData is a Dictionary Type Property
-            ViewData["Message"] = "Hello Ahmed";
+            //// 1 . ViewData is a Dictionary Type Property
+            //ViewData["Message"] = "Hello Ahmed";
 
 
-            // 2. ViewBag is a Dynamic Type Property
-            ViewBag.Message = "Hello Ahmed";
-            ViewBag.Message = new { Id = 10, Name = "Ahmed" };
+            //// 2. ViewBag is a Dynamic Type Property
+            //ViewBag.Message = "Hello Ahmed";
+            //ViewBag.Message = new { Id = 10, Name = "Ahmed" }; 
+            #endregion
 
 
-
-            var departments = _departmentService.GetAllDepartments();
-
+            var departments = await _departmentService.GetAllDepartmentsAsync();
+             
             return View(departments);
+
         }
 
         #endregion
 
         #region Details
         [HttpGet] // GET : /Department/Details
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id is null)
                 return BadRequest();
 
-            var department = _departmentService.GetDepartmentById(id.Value);
+            var department = await _departmentService.GetDepartmentByIdAsync(id.Value);
 
             if (department is null)
                 return NotFound();
@@ -81,7 +86,7 @@ namespace LinkDev.IKEA.PL.Controllers
 
         [HttpPost] // POST
         [ValidateAntiForgeryToken]
-        public IActionResult Create(DepartmentEditViewModel departmentVM)
+        public async Task<IActionResult> Create(DepartmentEditViewModel departmentVM)
         {
             if (!ModelState.IsValid) // Server-Side Validation
                 return View(departmentVM);
@@ -89,16 +94,21 @@ namespace LinkDev.IKEA.PL.Controllers
             var message = string.Empty;
             try
             {
-                var CreatedDepartment = new CreatedDepartmentDto()
-                {
+                ///var CreatedDepartment = new CreatedDepartmentDto()
+                ///{
+                ///
+                ///    Code = departmentVM.Code,
+                ///    Name = departmentVM.Name,
+                ///    Description = departmentVM.Description,
+                ///    CreationDate = departmentVM.CreationDate,
+                ///
+                ///};
+                ///
 
-                    Code = departmentVM.Code,
-                    Name = departmentVM.Name,
-                    Description = departmentVM.Description,
-                    CreationDate = departmentVM.CreationDate,
+                var CreatedDepartment = _mapper.Map<CreatedDepartmentDto>(departmentVM);
 
-                };
-                var Created = _departmentService.CreateDepartment(CreatedDepartment) > 0;
+
+                var Created = await _departmentService.CreateDepartmentAsync(CreatedDepartment) > 0;
 
                 // TempData : Is a Property of type Dictionary object
 
@@ -131,30 +141,30 @@ namespace LinkDev.IKEA.PL.Controllers
         #endregion   [HttpGet] // Get: Department/Edit/id
 
         #region Update
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id is null)
                 return BadRequest(); // 400
 
-            var department = _departmentService.GetDepartmentById(id.Value);
+            var department = await _departmentService.GetDepartmentByIdAsync(id.Value);
 
             if (department is null)
                 return NotFound(); //404
 
-            return View(new DepartmentEditViewModel()
-            {
 
-                Code = department.Code,
-                Name = department.Name,
-                Description = department.Description,
-                CreationDate = department.CreationDate,
-            });
+            var departmentVM = _mapper.Map<DepartmentDetailsDto, DepartmentEditViewModel>(department);
+
+
+            return View(departmentVM);
         }
 
         [HttpPost] //Post
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id, DepartmentEditViewModel departmentVM)
-        {
+        public async Task<IActionResult> Edit([FromRoute] int? id, DepartmentEditViewModel departmentVM)
+        { 
+            if(id is null)
+                return BadRequest();
+
             if (!ModelState.IsValid) // Server-Side Validation
                 return View(departmentVM);
 
@@ -164,23 +174,31 @@ namespace LinkDev.IKEA.PL.Controllers
             try
             {
 
-                var departmentToUpdate = new UpdatedDepartmentDto()
+                ///var departmentToUpdate = new UpdatedDepartmentDto()
+                ///{
+                ///    Id = id,
+                ///    Code = departmentVM.Code,
+                ///    Name = departmentVM.Name,
+                ///    Description = departmentVM.Description,
+                ///    CreationDate = departmentVM.CreationDate,};
+
+                var departmentToUpdate = _mapper.Map<UpdatedDepartmentDto>(departmentVM);
+
+
+                var Updated = await _departmentService.UpdateDepartmentAsync(departmentToUpdate);
+
+                if (Updated > 0)
                 {
-                    Id = id,
-                    Code = departmentVM.Code,
-                    Name = departmentVM.Name,
-                    Description = departmentVM.Description,
-                    CreationDate = departmentVM.CreationDate,
-
-                };
-
-                var Updated = _departmentService.UpdateDepartment(departmentToUpdate) > 0;
-
-                if (Updated)
                     return RedirectToAction(nameof(Index));
+                }
+                else 
+                {
+                    message = "An Error During Updating The Department :(";
+                }
 
 
-                message = "An Error During Updating The Department :(";
+               
+
 
 
             }
@@ -207,12 +225,12 @@ namespace LinkDev.IKEA.PL.Controllers
 
         #region Delete
         [HttpGet] // Get /Department/Delete/id?
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id is null)
                 return BadRequest();
 
-            var department = _departmentService.GetDepartmentById(id.Value);
+            var department = await _departmentService.GetDepartmentByIdAsync(id.Value);
 
             if (department is null)
                 return NotFound();
@@ -223,14 +241,14 @@ namespace LinkDev.IKEA.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult>  Delete(int id)
         {
             var message = string.Empty;
 
             try
             {
-                var deleted = _departmentService.DeleteDepartment(id);
-                if (deleted)
+                var isdeleted = await _departmentService.DeleteDepartmentAsync(id);
+                if (isdeleted == true)
                     return RedirectToAction(nameof(Index));
 
 

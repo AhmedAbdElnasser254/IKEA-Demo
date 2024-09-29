@@ -1,9 +1,13 @@
+using LinkDev.IKEA.BLL.Common.Attachments;
 using LinkDev.IKEA.BLL.Services.Departments;
 using LinkDev.IKEA.BLL.Services.Employees;
 using LinkDev.IKEA.DAL.Persistance.Data;
 using LinkDev.IKEA.DAL.Persistance.Repositories.Departments;
 using LinkDev.IKEA.DAL.Persistance.Repositories.Employees;
+using LinkDev.IKEA.DAL.Persistance.UnitOfWork;
+using LinkDev.IKEA.PL.Mapping;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace LinkDev.IKEA.PL
 {
@@ -28,17 +32,30 @@ namespace LinkDev.IKEA.PL
                 .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
             });
-           
 
 
 
 
-            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+            //builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            //builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 
 
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+
+
+
+
+            builder.Services.AddTransient<IAttachmentService, AttachmentService>();
+
+
+
+
+            //builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
+            builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfile()));
 
 
 

@@ -65,7 +65,7 @@ namespace LinkDev.IKEA.DAL.Persistance.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", (string)null);
                 });
 
             modelBuilder.Entity("LinkDev.IKEA.DAL.Models.Employees.Employee", b =>
@@ -90,7 +90,7 @@ namespace LinkDev.IKEA.DAL.Persistance.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<int?>("DepartmentId")
+                    b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -133,7 +133,7 @@ namespace LinkDev.IKEA.DAL.Persistance.Data.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("LinkDev.IKEA.DAL.Models.Employees.Employee", b =>
@@ -141,7 +141,8 @@ namespace LinkDev.IKEA.DAL.Persistance.Data.Migrations
                     b.HasOne("LinkDev.IKEA.DAL.Entities.Department.Department", "Department")
                         .WithMany("Employees")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("Department");
                 });

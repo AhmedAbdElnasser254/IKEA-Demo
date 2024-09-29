@@ -14,7 +14,8 @@ namespace LinkDev.IKEA.DAL.Persistance.Data.Migrations
                 name: "DepartmentId",
                 table: "Employees",
                 type: "int",
-                nullable: true);
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_DepartmentId",
