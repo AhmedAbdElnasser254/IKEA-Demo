@@ -31,14 +31,11 @@ namespace LinkDev.IKEA.PL.Controllers
         #endregion
 
         #region Index
-        [HttpGet] // GRT : /employee/Index
-        public IActionResult Index(string Search)
+
+        [HttpGet] // GET : /Employee/Index
+        public IActionResult Index(string search)
         {
-            var employees = _employeeService.GetAllEmployees(Search);
-
-            if (!string.IsNullOrEmpty(Search))
-                return PartialView("Partials/_EmployeeListPartial", employees);
-
+            var employees = _employeeService.GetAllEmployees(search);
             return View(employees);
         }
 
@@ -186,6 +183,8 @@ namespace LinkDev.IKEA.PL.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
+            _logger.LogInformation($"Delete action called with ID: {id}");
+
             var message = string.Empty;
 
             try

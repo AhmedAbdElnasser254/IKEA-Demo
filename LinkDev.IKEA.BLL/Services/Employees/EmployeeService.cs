@@ -45,7 +45,8 @@ namespace LinkDev.IKEA.BLL.Services.Employees
                     Salary = employee.Salary,
                     Gender = nameof(employee.Gender),
                     EmployeeType = nameof(employee.EmployeeType),
-                    Department = employee.Department.Name
+                    Department = employee.Department.Name,
+                    Image = employee.Image,
 
 
                 }).ToList();
