@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LinkDev.IKEA.DAL.Persistance.UnitOfWork
 {
-    public interface IUnitOfWork  : IDisposable
+    public interface IUnitOfWork  : IAsyncDisposable
     {
 
         public IEmployeeRepository  EmployeeRepository { get;  }
@@ -16,7 +16,7 @@ namespace LinkDev.IKEA.DAL.Persistance.UnitOfWork
         public IDepartmentRepository DepartmentRepository { get;  }
 
 
-        int Complete();
+        Task<int> CompleteAsync();
 
 
     }

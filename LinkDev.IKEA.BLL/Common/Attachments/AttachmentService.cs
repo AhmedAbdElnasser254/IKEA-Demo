@@ -12,16 +12,16 @@ namespace LinkDev.IKEA.BLL.Common.Attachments
         private readonly List<string> _allowedExtwnsions = new() { ".png", ".jpg", ".jpeg" };
         private const int _allowedMaxSize = 2_097_152;
 
-        public string? Upload(IFormFile file, string folderName)
+        public async Task<string> UploadFileAsync(IFormFile file, string folderName)
         {
 
             var extension = Path.GetExtension(file.FileName);
 
             if (!_allowedExtwnsions.Contains(extension))
-                return null;
+                throw new Exception("Invalid File Extension");
 
             if (file.Length > _allowedMaxSize)
-                return null;
+                throw new Exception("Invalid File Size");
 
 
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\files",folderName);
@@ -41,8 +41,9 @@ namespace LinkDev.IKEA.BLL.Common.Attachments
 
             using var fileStream = File.Create(filePath);
 
-            file.CopyTo(fileStream);
-            return fileName;
+            await file.CopyToAsync(fileStream);
+
+            return  fileName;
 
 
 
@@ -51,7 +52,7 @@ namespace LinkDev.IKEA.BLL.Common.Attachments
         }
 
 
-        public bool Delete(string filePath)
+        public bool DeleteFile(string filePath)
         {
             if (File.Exists(filePath))
             {

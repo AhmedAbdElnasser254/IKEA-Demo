@@ -10,9 +10,9 @@ namespace LinkDev.IKEA.BLL.Common.Attachments
     public interface IAttachmentService
     {
 
-        string Upload(IFormFile file, string folderName);
+        Task<string> UploadFileAsync(IFormFile file, string folderName);
 
-        bool Delete(string filePath);
+        bool DeleteFile(string filePath);
 
 
     }

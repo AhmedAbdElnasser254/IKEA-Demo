@@ -9,9 +9,9 @@ namespace LinkDev.IKEA.DAL.Persistance.Repositories._Generic
 {
     public interface IGenericRepository<T> where T : ModelBase
     {
-        T? Get(int id);
+       Task<T?> GetAsync(int id);
 
-        IEnumerable<T> GetAll(bool withAsNoTracking = true);
+        Task<IEnumerable<T>> GetAllAsync(bool withAsNoTracking = true);
 
         IQueryable<T> GetAllAsIQueryable();
 
