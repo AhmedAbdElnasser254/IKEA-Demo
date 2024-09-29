@@ -1,4 +1,5 @@
-﻿using LinkDev.IKEA.BLL.Models.Employees;
+﻿using LinkDev.IKEA.BLL.Common.Attachments;
+using LinkDev.IKEA.BLL.Models.Employees;
 using LinkDev.IKEA.DAL.Models.Employees;
 using LinkDev.IKEA.DAL.Persistance.Repositories.Employees;
 using LinkDev.IKEA.DAL.Persistance.UnitOfWork;
@@ -14,10 +15,15 @@ namespace LinkDev.IKEA.BLL.Services.Employees
     public class EmployeeService : IEmployeeService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAttachmentService _attachmentService;
 
-        public EmployeeService(IUnitOfWork unitOfWork)
+        public EmployeeService(
+            IUnitOfWork unitOfWork,
+            IAttachmentService attachmentService
+            )
         {
             _unitOfWork = unitOfWork;
+            _attachmentService = attachmentService;
         }
 
 
@@ -100,6 +106,7 @@ namespace LinkDev.IKEA.BLL.Services.Employees
 
         public int CreateEmployee(CreatedEmployeeDto employeeDto)
         {
+
             var employee = new Employee()
             {
                 Name = employeeDto.Name,
@@ -117,6 +124,11 @@ namespace LinkDev.IKEA.BLL.Services.Employees
                 LastModifiedBy = 1,
                 LastModifiedOn = DateTime.UtcNow,
             };
+
+
+            if(employeeDto.Image is not null)
+           employee.Image = _attachmentService.Upload(employeeDto.Image, "images");
+
 
 
             _unitOfWork.EmployeeRepository.Add(employee);

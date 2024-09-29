@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LinkDev.IKEA.BLL.Common.Attachments
 {
-    internal class AttachmentService : IAttachmentService
+    public class AttachmentService : IAttachmentService
     {
         private readonly List<string> _allowedExtwnsions = new() { ".png", ".jpg", ".jpeg" };
         private const int _allowedMaxSize = 2_097_152;
