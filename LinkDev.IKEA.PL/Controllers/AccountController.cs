@@ -18,8 +18,6 @@ namespace LinkDev.IKEA.PL.Controllers
 		} 
 		#endregion
 
-
-
 		#region Sign Up
 
 
@@ -80,8 +78,6 @@ namespace LinkDev.IKEA.PL.Controllers
 
 		#endregion
 
-
-
 		#region SignIn
 
 		[HttpGet] // Get: /Account/SignIn
@@ -136,6 +132,16 @@ namespace LinkDev.IKEA.PL.Controllers
 
 
 		}
+		#endregion
+
+		#region SignOut
+
+		public async new Task<IActionResult?> SignOut()
+		{
+			await _signInManager.SignOutAsync();
+			return RedirectToAction(nameof(SignIn));
+		}
+
 		#endregion
 
 	}

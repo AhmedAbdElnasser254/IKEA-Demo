@@ -91,7 +91,7 @@ namespace LinkDev.IKEA.PL
 			builder.Services.AddAuthentication(option =>
 			{
 
-				option.DefaultAuthenticateScheme = "Hamda";
+				option.DefaultAuthenticateScheme = "Identity.Application";
 				option.DefaultChallengeScheme = "Identity.Application";
 
 			})
@@ -100,8 +100,11 @@ namespace LinkDev.IKEA.PL
 					option.LoginPath = "/Account/Login";
 					option.AccessDeniedPath = "/Home/Error";
 					option.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-					option.LogoutPath = "/Account/SignIn";
-				});
+
+					//option.LogoutPath = "/Account/SignIn";
+					//option.ForwardSignOut = "/Account/SignIn";
+
+                });
 
 			#endregion
 
