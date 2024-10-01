@@ -79,9 +79,29 @@ namespace LinkDev.IKEA.PL
 
 			})
 				.AddEntityFrameworkStores<ApplicationDbContext>();
-				
 
+			builder.Services.ConfigureApplicationCookie((option) =>
+			{
+				option.LoginPath = "/Account/SignIn";
+				option.AccessDeniedPath = "/Home/Error";
+				option.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+				option.LogoutPath = "/Account/SignIn";
+			});
 
+			builder.Services.AddAuthentication(option =>
+			{
+
+				option.DefaultAuthenticateScheme = "Hamda";
+				option.DefaultChallengeScheme = "Identity.Application";
+
+			})
+				.AddCookie("Hamda", ".AspNetCore.Hamda", option => 
+				{
+					option.LoginPath = "/Account/Login";
+					option.AccessDeniedPath = "/Home/Error";
+					option.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+					option.LogoutPath = "/Account/SignIn";
+				});
 
 			#endregion
 
@@ -102,7 +122,9 @@ namespace LinkDev.IKEA.PL
 
 			app.UseRouting();
 
+			app.UseAuthentication();
 
+			app.UseAuthorization();
 
 			app.MapControllerRoute(
 				name: "default",
